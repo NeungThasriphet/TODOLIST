@@ -1,23 +1,33 @@
 import React, { Component } from "react";
 import "antd/dist/antd.css";
-import { Typography, Row, Col, Divider, Input, Card } from "antd";
-import { OrderedListOutlined } from "@ant-design/icons";
+import { Typography, Row, Col, Divider, Input, Card, Button } from "antd";
+import { OrderedListOutlined, PlusOutlined } from "@ant-design/icons";
+import { connect } from "react-redux";
 import "../App.css";
 
 class Todo extends Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
-      notes: ["Work out at home", "Go to super market", "Have Breakfast"],
+      value: "",
     };
-    this.addTodo.bind(this);
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleAddNeweTask = this.handleAddNeweTask.bind(this);
+  }
+  //
+  //set value from event to state
+  handleChange(event) {
+    this.setState({ value: event.target.value });
   }
 
-  addTodo = (e) => {
-    if (e.key === "Enter") {
-      this.setState({ notes: [...this.state.notes, e.target.value] });
-    }
-  };
+  handleAddNeweTask(event) {
+    event.preventDefault();
+    this.props.dispatch({
+      type: "ADD_TODO",
+      payload: { taskName: this.state.value },
+    });
+  }
 
   render() {
     const { Title } = Typography;
@@ -36,11 +46,34 @@ class Todo extends Component {
               ></Divider>
               <Row>
                 <Col span={24}>
-                  <Input
-                    placeholder="New task name"
-                    type="type"
-                    onKeyUp={this.addTodo}
-                  />
+                  <form onSubmit={this.handleAddNeweTask}>
+                    <Row>
+                      <Col span={18}>
+                        <Input
+                          type="text"
+                          value={this.state.value}
+                          onChange={this.handleChange}
+                          placeholder="Your task"
+                        />
+                      </Col>
+                      <Col offset={1} span={5}>
+                        <div>
+                          <Button
+                            type="submit"
+                            onClick={this.handleAddNeweTask}
+                            style={{
+                              width: "100%",
+                              backgroundColor: "#1990FF",
+                              color: "#fff",
+                            }}
+                          >
+                            <PlusOutlined />
+                            New Task
+                          </Button>
+                        </div>
+                      </Col>
+                    </Row>
+                  </form>
                 </Col>
               </Row>
 
@@ -52,12 +85,12 @@ class Todo extends Component {
               </Divider>
               <Row style={{ marginTop: "10px" }}>
                 <Col span={21}>
-                  {this.state.notes.map((note, index) => (
+                  {this.props.todolist.map((task, index) => (
                     <Card
                       key={index}
                       style={{ width: "auto", marginTop: "10px" }}
                     >
-                      <p>{note}</p>
+                      <p>{task.taskName}</p>
                     </Card>
                   ))}
                 </Col>
@@ -71,4 +104,14 @@ class Todo extends Component {
   }
 }
 
-export default Todo;
+const mapStateToProps = (state) => {
+  return { todolist: state.todolist };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    dispatch,
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Todo);
