@@ -5,14 +5,28 @@ import { OrderedListOutlined, PlusOutlined } from "@ant-design/icons";
 import "./App.css";
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      notes: ["Work out at home", "Go to super market", "Have Breakfast"],
+    };
+    this.addTodo.bind(this);
+  }
+
+  addTodo = (e) => {
+    if (e.key === "Enter") {
+      this.setState({ notes: [...this.state.notes, e.target.value] });
+    }
+  };
+
   render() {
     const { Title } = Typography;
     return (
       <>
-        <div>
-          <Row style={{ backgroundColor: "#fff" }}>
+        <div style={{ margin: "10px" }}>
+          <Row>
             <Col span={6}></Col>
-            <Col span={12}>
+            <Col span={12} style={{ backgroundColor: "#fff" }}>
               <Title>
                 <OrderedListOutlined /> TODO LIST
               </Title>
@@ -21,15 +35,19 @@ class App extends Component {
                 style={{ color: "#333", fontWeight: "normal" }}
               ></Divider>
               <Row>
-                <Col span={19}>
-                  <Input placeholder="New task name" />
+                <Col span={24}>
+                  <Input
+                    placeholder="New task name"
+                    type="type"
+                    onKeyUp={this.addTodo}
+                  />
                 </Col>
-                <Col span={1}></Col>
+                {/* <Col span={1}></Col>
                 <Col span={4}>
                   <Button type="primary" icon={<PlusOutlined />}>
                     Add new task
                   </Button>
-                </Col>
+                </Col> */}
               </Row>
 
               <Divider
@@ -40,15 +58,14 @@ class App extends Component {
               </Divider>
               <Row style={{ marginTop: "10px" }}>
                 <Col span={21}>
-                  <Card style={{ width: "auto", marginTop: "10px" }}>
-                    <p>Task 1</p>
-                  </Card>
-                  <Card style={{ width: "auto", marginTop: "10px" }}>
-                    <p>Task 2</p>
-                  </Card>
-                  <Card style={{ width: "auto", marginTop: "10px" }}>
-                    <p>Task 3</p>
-                  </Card>
+                  {this.state.notes.map((note, index) => (
+                    <Card
+                      key={index}
+                      style={{ width: "auto", marginTop: "10px" }}
+                    >
+                      <p>{note}</p>
+                    </Card>
+                  ))}
                 </Col>
               </Row>
             </Col>
